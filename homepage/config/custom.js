@@ -54,7 +54,7 @@
         m.inflight = false;
         render(m);
         var busy = m.st.state === "starting" || m.st.state === "stopping";
-        setTimeout(function () { poll(m); }, busy ? 700 : 3000);
+        setTimeout(function () { poll(m); }, busy ? 700 : m.st.state === "error" ? 30000 : 3000);
       });
   }
 
