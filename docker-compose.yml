@@ -1,0 +1,215 @@
+services:
+  traefik:
+    image: traefik:v2.11
+    container_name: traefik_global
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "127.0.0.1:80:80"
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+    networks:
+      - web_network
+    labels:
+      - "homepage.group=Sistema"
+      - "homepage.name=Traefik"
+      - "homepage.icon=traefik.png"
+      - "homepage.href=http://localhost:8080/dashboard/"
+      - "homepage.description=Reverse proxy e routing"
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    environment:
+      - HOMEPAGE_ALLOWED_HOSTS=homepage.localhost
+    volumes:
+      - ./homepage/config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - web_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homepage.rule=Host(`homepage.localhost`)"
+      - "traefik.http.routers.homepage.entrypoints=web"
+      - "traefik.http.services.homepage.loadbalancer.server.port=3000"
+
+  it-tools:
+    build: ./it-tools-it
+    image: it-tools-it:local
+    container_name: it_tools
+    networks:
+      - web_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.it-tools.rule=Host(`tools.localhost`)"
+      - "traefik.http.routers.it-tools.entrypoints=web"
+      - "traefik.http.services.it-tools.loadbalancer.server.port=80"
+      - "homepage.group=Strumenti"
+      - "homepage.name=IT-Tools"
+      - "homepage.icon=it-tools.png"
+      - "homepage.href=http://tools.localhost/"
+      - "homepage.description=Utility per sviluppatori"
+
+  cyberchef:
+    image: mpepping/cyberchef:latest
+    container_name: cyberchef
+    networks:
+      - web_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cyberchef.rule=Host(`chef.localhost`)"
+      - "traefik.http.routers.cyberchef.entrypoints=web"
+      - "traefik.http.services.cyberchef.loadbalancer.server.port=8000"
+      - "homepage.group=Security"
+      - "homepage.name=CyberChef"
+      - "homepage.icon=cyberchef.png"
+      - "homepage.href=http://chef.localhost/"
+      - "homepage.description=Encode, decode, hash, crypto"
+
+  excalidraw:
+    image: excalidraw/excalidraw:latest
+    container_name: excalidraw
+    networks:
+      - web_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.excalidraw.rule=Host(`draw.localhost`)"
+      - "traefik.http.routers.excalidraw.entrypoints=web"
+      - "traefik.http.services.excalidraw.loadbalancer.server.port=80"
+      - "homepage.group=Strumenti"
+      - "homepage.name=Excalidraw"
+      - "homepage.icon=excalidraw.png"
+      - "homepage.href=http://draw.localhost/"
+      - "homepage.description=Lavagna e diagrammi a mano libera"
+
+  arcade:
+    build: ./arcade
+    image: arcade:local
+    container_name: arcade
+    networks:
+      - web_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.arcade.rule=Host(`games.localhost`)"
+      - "traefik.http.routers.arcade.entrypoints=web"
+      - "traefik.http.services.arcade.loadbalancer.server.port=80"
+      - "homepage.group=Svago"
+      - "homepage.name=Arcade"
+      - "homepage.icon=mdi-gamepad-variant"
+      - "homepage.href=http://games.localhost/"
+      - "homepage.description=2048, Hextris, Pac-Man"
+
+  juiceshop:
+    image: bkimminich/juice-shop:latest
+    container_name: juiceshop
+    networks:
+      - web_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.juiceshop.rule=Host(`juice.localhost`)"
+      - "traefik.http.routers.juiceshop.entrypoints=web"
+      - "traefik.http.services.juiceshop.loadbalancer.server.port=3000"
+      - "homepage.group=Security"
+      - "homepage.name=Juice Shop"
+      - "homepage.icon=mdi-shield-bug"
+      - "homepage.href=http://juice.localhost/"
+      - "homepage.description=App vulnerabile OWASP per esercitarsi"
+
+  httpbin:
+    image: kennethreitz/httpbin:latest
+    container_name: httpbin
+    networks:
+      - web_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.httpbin.rule=Host(`bin.localhost`)"
+      - "traefik.http.routers.httpbin.entrypoints=web"
+      - "traefik.http.services.httpbin.loadbalancer.server.port=80"
+      - "homepage.group=Security"
+      - "homepage.name=httpbin"
+      - "homepage.icon=mdi-api"
+      - "homepage.href=http://bin.localhost/"
+      - "homepage.description=Testa richieste e risposte HTTP"
+
+  drawio:
+    image: jgraph/drawio:latest
+    container_name: drawio
+    networks:
+      - web_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.drawio.rule=Host(`diagram.localhost`)"
+      - "traefik.http.routers.drawio.entrypoints=web"
+      - "traefik.http.services.drawio.loadbalancer.server.port=8080"
+      - "homepage.group=Strumenti"
+      - "homepage.name=Draw.io"
+      - "homepage.icon=mdi-vector-polyline"
+      - "homepage.href=http://diagram.localhost/"
+      - "homepage.description=Diagrammi e schemi di rete"
+
+  stirling-pdf:
+    image: stirlingtools/stirling-pdf:latest-ultra-lite
+    container_name: stirling-pdf
+    networks:
+      - web_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.stirling-pdf.rule=Host(`pdf.localhost`)"
+      - "traefik.http.routers.stirling-pdf.entrypoints=web"
+      - "traefik.http.services.stirling-pdf.loadbalancer.server.port=8080"
+      - "homepage.group=Strumenti"
+      - "homepage.name=Stirling PDF"
+      - "homepage.icon=mdi-file-pdf-box"
+      - "homepage.href=http://pdf.localhost/"
+      - "homepage.description=Unisci, dividi, comprimi PDF"
+
+  librespeed:
+    image: ghcr.io/librespeed/speedtest:latest
+    container_name: librespeed
+    environment:
+      - MODE=standalone
+    networks:
+      - web_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.librespeed.rule=Host(`speed.localhost`)"
+      - "traefik.http.routers.librespeed.entrypoints=web"
+      - "traefik.http.services.librespeed.loadbalancer.server.port=8080"
+      - "homepage.group=Sistema"
+      - "homepage.name=LibreSpeed"
+      - "homepage.icon=mdi-speedometer"
+      - "homepage.href=http://speed.localhost/"
+      - "homepage.description=Speedtest della rete locale"
+
+  # Pulsante ACCENDI/SPEGNI dei progetti nella homepage (vedi projects-ctl/app.py).
+  # Agisce solo sui progetti compose elencati in PROJECTS.
+  projects-ctl:
+    build: ./projects-ctl
+    image: projects-ctl:local
+    container_name: projects_ctl
+    restart: unless-stopped
+    environment:
+      - 'PROJECTS={"blackbyrd":"blackbyrd","renova":"renova","italiainclassea-2026":"italiainclassea-2026"}'
+      - ALLOWED_ORIGINS=http://homepage.localhost
+      - STOP_TIMEOUT=20
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - web_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.projects-ctl.rule=Host(`proj-ctl.localhost`)"
+      - "traefik.http.routers.projects-ctl.entrypoints=web"
+      - "traefik.http.services.projects-ctl.loadbalancer.server.port=8000"
+
+networks:
+  web_network:
+    name: web_network
+    external: true

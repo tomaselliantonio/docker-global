@@ -1,0 +1,7 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/services/
+#
+# I servizi sono gestiti tramite label Docker (homepage.*) sui rispettivi
+# container/docker-compose, non qui. Questo file resta come fallback per
+# eventuali servizi non containerizzati.

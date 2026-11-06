@@ -1,0 +1,396 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Playfair+Display:ital,wght@0,500;1,500&family=JetBrains+Mono:wght@400;500;700&display=swap");
+
+/* SWISS INDUSTRIAL PRINT
+   carta / inchiostro / un solo rosso. niente raggi, gradienti, vetro. */
+
+:root {
+  --paper: #eae8e3;
+  --ink: #0b0b0b;
+  --red: #e61919;
+  --head: "Archivo Black", "Arial Black", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+
+* { border-radius: 0 !important; }
+
+html {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+}
+
+body,
+#__next,
+#page_wrapper,
+#inner_wrapper {
+  background: transparent !important;
+  font-family: var(--mono) !important;
+  color: var(--ink) !important;
+}
+
+/* forza l'inchiostro su tutti i testi tema di Homepage */
+#page_wrapper [class*="text-theme"],
+#page_wrapper [class*="text-white"],
+#page_wrapper span,
+#page_wrapper p,
+#page_wrapper a,
+#page_wrapper h2 {
+  color: var(--ink) !important;
+}
+
+/* grana carta */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ---------- testata ---------- */
+#information-widgets {
+  margin: 0 !important;
+  padding: 1.5rem 2rem 0 !important;
+}
+
+#widgets-wrap {
+  gap: 0 !important;
+  align-items: flex-end;
+}
+
+.information-widget-greeting {
+  flex: 1 1 auto !important;
+  max-width: none !important;
+  margin: 0 2rem 0 0 !important;
+  align-self: flex-end !important;
+}
+
+.information-widget-greeting span {
+  display: block;
+  margin: 0 !important;
+  font-family: "Playfair Display", Georgia, serif !important;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(2.2rem, 3.6vw, 3.6rem) !important;
+  line-height: 1 !important;
+  letter-spacing: -0.015em;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.information-widget-greeting span::after {
+  content: ".";
+  color: var(--red);
+  font-style: normal;
+}
+
+/* riga tecnica sopra il titolo */
+#information-widgets::before {
+  content: "UNIT / D-01   >>>   LOCAL INFRASTRUCTURE   ///   REV 2.6   ///   WEB_NETWORK";
+  display: block;
+  flex: 0 0 100%;
+  margin-bottom: 1.4rem;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  white-space: pre;
+  overflow: hidden;
+}
+
+/* striscia hazard */
+#information-widgets::after {
+  content: "";
+  display: block;
+  flex: 0 0 100%;
+  height: 12px;
+  margin-top: 1.4rem;
+  background: repeating-linear-gradient(-45deg, var(--ink) 0 10px, var(--paper) 10px 20px);
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+
+#information-widgets > #widgets-wrap + #information-widgets-right,
+#information-widgets-right {
+  gap: 0 !important;
+}
+
+.information-widget-resource,
+.information-widget-datetime,
+.information-widget-search {
+  font-family: var(--mono) !important;
+  font-size: 11px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.information-widget-resource {
+  margin: 0 !important;
+  padding: 0.4rem 0.8rem !important;
+  border-right: 1px solid var(--ink);
+}
+
+.information-widget-resource > div > div { font-size: 11px !important; }
+
+.information-widget-resource svg { display: none; }
+
+.information-widget-resource .resource-usage {
+  height: 6px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: 1px solid var(--ink);
+}
+
+.information-widget-resource .resource-usage > div {
+  height: 100% !important;
+  border-radius: 0 !important;
+  background: var(--ink) !important;
+}
+
+.information-widget-datetime span {
+  font-size: 11px !important;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0 0.8rem;
+}
+
+.information-widget-search { margin-left: 0.5rem; }
+
+.information-widget-search input {
+  height: 100% !important;
+  background: transparent !important;
+  border: 2px solid var(--ink) !important;
+  font-family: var(--mono) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  box-shadow: none !important;
+}
+
+.information-widget-search input::placeholder { color: var(--ink) !important; opacity: 0.55; }
+.information-widget-search input:focus { outline: 0; box-shadow: 4px 4px 0 var(--red) !important; }
+
+.information-widget-search button { display: none !important; }
+
+/* ---------- griglia blueprint ---------- */
+#page_wrapper { counter-reset: unit; }
+
+#layout-groups,
+#services {
+  display: grid !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1px;
+  align-items: stretch !important;
+  margin: 1.5rem 2rem 0 !important;
+  background: var(--ink);
+  border: 2px solid var(--ink);
+}
+
+#services { margin-top: -2px !important; }
+
+.services-group {
+  position: relative;
+  flex: none !important;
+  grid-column: span 4;
+  padding: 0.9rem 1rem 0.2rem !important;
+  background: var(--paper);
+  counter-increment: unit;
+}
+
+#layout-groups > .services-group:nth-child(1) { grid-column: span 6; }
+#layout-groups > .services-group:nth-child(2) { grid-column: span 3; }
+#layout-groups > .services-group:nth-child(3) { grid-column: span 3; }
+
+/* crocetta all'angolo */
+.services-group::after {
+  content: "+";
+  position: absolute;
+  top: 0.55rem;
+  right: 0.8rem;
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+@media (max-width: 1100px) {
+  .services-group,
+  #layout-groups > .services-group:nth-child(n) { grid-column: span 12 !important; }
+}
+
+/* titolo gruppo: numero rosso + nome pesante */
+.services-group > button { padding-bottom: 0.7rem; border-bottom: 2px solid var(--ink); }
+
+.service-group-icon { display: none !important; }
+
+.service-group-name {
+  font-family: var(--head) !important;
+  font-size: 1.7rem !important;
+  line-height: 1 !important;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  font-weight: 400 !important;
+  background: none !important;
+}
+
+.service-group-name::before {
+  content: counter(unit, decimal-leading-zero) " /";
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--red);
+  margin-right: 0.6rem;
+  align-self: flex-start;
+  padding-top: 2px;
+}
+
+/* chevron del disclosure */
+.services-group > button > svg { display: none !important; }
+
+/* ---------- servizi come righe di una tabella ---------- */
+.services-list {
+  display: block !important;
+  margin-top: 0 !important;
+}
+
+.service { margin: 0 !important; border-top: 1px solid var(--ink); }
+.service:first-child { border-top: 0; }
+
+.service-card {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0.75rem 0.2rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  transition: background 0.12s steps(2), transform 0.12s steps(2);
+}
+
+.service-card:hover {
+  background: var(--ink) !important;
+  transform: translateX(6px);
+}
+
+.service-card:hover * { color: var(--paper) !important; }
+
+.service-icon {
+  width: 2.2rem !important;
+  height: 2.2rem;
+  margin: 0 0.8rem 0 0.1rem;
+  align-self: center;
+  background: var(--ink);
+}
+
+.service-icon > * {
+  display: block;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  object-fit: contain;
+  filter: grayscale(1) brightness(0) invert(1);
+}
+
+.service-card:hover .service-icon { background: var(--paper); }
+.service-card:hover .service-icon > * { filter: grayscale(1) brightness(0) !important; }
+
+.service-name {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  font-family: var(--head) !important;
+  font-size: 1.15rem !important;
+  line-height: 1.05;
+  font-weight: 400 !important;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.service-description {
+  margin-top: 3px !important;
+  font-family: var(--mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+/* stato: etichetta mono tra parentesi */
+.service-tags {
+  top: 50% !important;
+  right: 0.4rem !important;
+  transform: translateY(-50%);
+}
+
+.docker-status {
+  margin: 0 !important;
+  padding: 2px 6px !important;
+  border: 1px solid var(--ink);
+  background: transparent !important;
+}
+
+.docker-status > div {
+  font-family: var(--mono) !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em;
+  color: var(--ink) !important;
+}
+
+.docker-status > div::before { content: "[ "; }
+.docker-status > div::after { content: " ]"; }
+
+.docker-status-exited,
+.docker-status-unhealthy {
+  background: var(--red) !important;
+  border-color: var(--red);
+}
+
+.docker-status-exited > div,
+.docker-status-unhealthy > div { color: var(--paper) !important; }
+
+.service:has(.docker-status-exited) .service-name,
+.service:has(.docker-status-exited) .service-description,
+.service:has(.docker-status-exited) .service-icon { opacity: 0.4; }
+
+/* ---------- bookmark ---------- */
+.bookmark-group {
+  position: relative;
+  padding-top: 1rem !important;
+}
+
+.bookmark-group-name {
+  font-family: var(--head) !important;
+  font-size: 1.1rem !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  background: none !important;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid var(--ink);
+}
+
+.bookmark a {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--ink) !important;
+  font-family: var(--mono) !important;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: none;
+}
+
+.bookmark a [class*="bg-theme"] {
+  background: var(--ink) !important;
+}
+#page_wrapper .bookmark a [class*="bg-theme"],
+#page_wrapper .bookmark a [class*="bg-theme"] * { color: var(--paper) !important; }
+.bookmark a:hover { background: var(--ink) !important; }
+.bookmark a:hover * { color: var(--paper) !important; }
+
+/* ---------- varie ---------- */
+::selection { background: var(--red); color: var(--paper); }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--paper); border-left: 1px solid var(--ink); }
+::-webkit-scrollbar-thumb { background: var(--ink); }
+
+#page_wrapper svg { color: var(--ink); }

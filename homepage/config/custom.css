@@ -1,0 +1,517 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Playfair+Display:ital,wght@0,500;1,500&family=JetBrains+Mono:wght@400;500;700&display=swap");
+
+/* SWISS INDUSTRIAL PRINT
+   carta / inchiostro / un solo rosso. niente raggi, gradienti, vetro. */
+
+:root {
+  --paper: #eae8e3;
+  --ink: #0b0b0b;
+  --red: #e61919;
+  --head: "Archivo Black", "Arial Black", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+
+* { border-radius: 0 !important; }
+
+html {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+}
+
+body,
+#__next,
+#page_wrapper,
+#inner_wrapper {
+  background: transparent !important;
+  font-family: var(--mono) !important;
+  color: var(--ink) !important;
+}
+
+/* forza l'inchiostro su tutti i testi tema di Homepage */
+#page_wrapper [class*="text-theme"],
+#page_wrapper [class*="text-white"],
+#page_wrapper span,
+#page_wrapper p,
+#page_wrapper a,
+#page_wrapper h2 {
+  color: var(--ink) !important;
+}
+
+/* grana carta */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ---------- testata ---------- */
+#information-widgets {
+  margin: 0 !important;
+  padding: 1.5rem 2rem 0 !important;
+}
+
+#widgets-wrap {
+  gap: 0 !important;
+  align-items: flex-end;
+}
+
+.information-widget-greeting {
+  flex: 1 1 auto !important;
+  max-width: none !important;
+  margin: 0 2rem 0 0 !important;
+  align-self: flex-end !important;
+}
+
+.information-widget-greeting span {
+  display: block;
+  margin: 0 !important;
+  font-family: "Playfair Display", Georgia, serif !important;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(2.2rem, 3.6vw, 3.6rem) !important;
+  line-height: 1 !important;
+  letter-spacing: -0.015em;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.information-widget-greeting span::after {
+  content: ".";
+  color: var(--red);
+  font-style: normal;
+}
+
+/* striscia hazard */
+#information-widgets::after {
+  content: "";
+  display: block;
+  flex: 0 0 100%;
+  height: 12px;
+  margin-top: 1.4rem;
+  background: repeating-linear-gradient(-45deg, var(--ink) 0 10px, var(--paper) 10px 20px);
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+
+#information-widgets > #widgets-wrap + #information-widgets-right,
+#information-widgets-right {
+  gap: 0 !important;
+}
+
+.information-widget-resource,
+.information-widget-datetime,
+.information-widget-search {
+  font-family: var(--mono) !important;
+  font-size: 11px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.information-widget-resource {
+  margin: 0 !important;
+  padding: 0.4rem 0.8rem !important;
+  border-right: 1px solid var(--ink);
+}
+
+.information-widget-resource > div > div { font-size: 11px !important; }
+
+.information-widget-resource svg { display: none; }
+
+.information-widget-resource .resource-usage {
+  height: 6px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: 1px solid var(--ink);
+}
+
+.information-widget-resource .resource-usage > div {
+  height: 100% !important;
+  border-radius: 0 !important;
+  background: var(--ink) !important;
+}
+
+.information-widget-datetime span {
+  font-size: 11px !important;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0 0.8rem;
+}
+
+.information-widget-search { margin-left: 0.5rem; }
+
+.information-widget-search input {
+  height: 100% !important;
+  background: transparent !important;
+  border: 2px solid var(--ink) !important;
+  font-family: var(--mono) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  box-shadow: none !important;
+}
+
+.information-widget-search input::placeholder { color: var(--ink) !important; opacity: 0.55; }
+.information-widget-search input:focus { outline: 0; box-shadow: 4px 4px 0 var(--red) !important; }
+
+.information-widget-search button { display: none !important; }
+
+/* ---------- griglia blueprint ---------- */
+#page_wrapper { counter-reset: unit; }
+
+#layout-groups,
+#services {
+  display: grid !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1px;
+  align-items: stretch !important;
+  margin: 1.5rem 2rem 0 !important;
+  background: var(--ink);
+  border: 2px solid var(--ink);
+}
+
+/* sezione PROJECTS: staccata dagli strumenti, titolo proprio, numerazione P01.. */
+#services {
+  margin-top: 3rem !important;
+  counter-reset: unit;
+}
+
+#services::before {
+  content: "PROJECTS";
+  grid-column: 1 / -1;
+  padding: 0.9rem 1.2rem 0.7rem;
+  background: var(--paper);
+  border-bottom: 2px solid var(--ink);
+  font-family: var(--head);
+  font-size: clamp(2.4rem, 4.2vw, 3.8rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+}
+
+#services .service-group-name::before {
+  content: "P" counter(unit, decimal-leading-zero) " /";
+}
+
+.services-group {
+  position: relative;
+  flex: none !important;
+  grid-column: span 4;
+  padding: 0.9rem 1rem 0.2rem !important;
+  background: var(--paper);
+  counter-increment: unit;
+}
+
+#layout-groups > .services-group:nth-child(n) { grid-column: span 6; }
+#layout-groups > .services-group:last-child:nth-child(odd) { grid-column: span 12; }
+
+/* crocetta all'angolo */
+.services-group::after {
+  content: "+";
+  position: absolute;
+  top: 0.55rem;
+  right: 0.8rem;
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+@media (max-width: 1100px) {
+  .services-group,
+  #layout-groups > .services-group:nth-child(n) { grid-column: span 12 !important; }
+}
+
+/* titolo gruppo: numero rosso + nome pesante */
+.services-group > button { padding-bottom: 0.7rem; border-bottom: 2px solid var(--ink); }
+
+.service-group-icon { display: none !important; }
+
+.service-group-name {
+  font-family: var(--head) !important;
+  font-size: 1.7rem !important;
+  line-height: 1 !important;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  font-weight: 400 !important;
+  background: none !important;
+}
+
+.service-group-name::before {
+  content: counter(unit, decimal-leading-zero) " /";
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--red);
+  margin-right: 0.6rem;
+  align-self: flex-start;
+  padding-top: 2px;
+}
+
+/* chevron del disclosure */
+.services-group > button > svg { display: none !important; }
+
+/* ---------- servizi come righe di una tabella ---------- */
+.services-list {
+  display: block !important;
+  margin-top: 0 !important;
+}
+
+.service { margin: 0 !important; border-top: 1px solid var(--ink); }
+.service:first-child { border-top: 0; }
+
+.service-card {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0.75rem 0.2rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  transition: background 0.12s steps(2), transform 0.12s steps(2);
+}
+
+.service-card:hover {
+  background: var(--ink) !important;
+  transform: translateX(6px);
+}
+
+.service-card:hover * { color: var(--paper) !important; }
+
+.service-icon {
+  width: 2.2rem !important;
+  height: 2.2rem;
+  margin: 0 0.8rem 0 0.1rem;
+  align-self: center;
+  background: var(--ink);
+}
+
+.service-icon > * {
+  display: block;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  object-fit: contain;
+  filter: grayscale(1) brightness(0) invert(1);
+}
+
+.service-card:hover .service-icon { background: var(--paper); }
+.service-card:hover .service-icon > * { filter: grayscale(1) brightness(0) !important; }
+
+.service-name {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  font-family: var(--head) !important;
+  font-size: 1.15rem !important;
+  line-height: 1.05;
+  font-weight: 400 !important;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.service-description {
+  margin-top: 3px !important;
+  font-family: var(--mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+/* stato: etichetta mono tra parentesi */
+.service-tags {
+  top: 50% !important;
+  right: 0.4rem !important;
+  transform: translateY(-50%);
+}
+
+.docker-status {
+  margin: 0 !important;
+  padding: 2px 6px !important;
+  border: 1px solid var(--ink);
+  background: transparent !important;
+}
+
+.docker-status > div {
+  font-family: var(--mono) !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em;
+  color: var(--ink) !important;
+}
+
+.docker-status > div::before { content: "[ "; }
+.docker-status > div::after { content: " ]"; }
+
+.docker-status-exited,
+.docker-status-unhealthy {
+  background: var(--red) !important;
+  border-color: var(--red);
+}
+
+.docker-status-exited > div,
+.docker-status-unhealthy > div { color: var(--paper) !important; }
+
+.service:has(.docker-status-exited) .service-name,
+.service:has(.docker-status-exited) .service-description,
+.service:has(.docker-status-exited) .service-icon { opacity: 0.4; }
+
+/* ---------- bookmark ---------- */
+.bookmark-group {
+  position: relative;
+  padding-top: 1rem !important;
+}
+
+.bookmark-group-name {
+  font-family: var(--head) !important;
+  font-size: 1.1rem !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  background: none !important;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid var(--ink);
+}
+
+.bookmark a {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--ink) !important;
+  font-family: var(--mono) !important;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: none;
+}
+
+.bookmark a [class*="bg-theme"] {
+  background: var(--ink) !important;
+}
+#page_wrapper .bookmark a [class*="bg-theme"],
+#page_wrapper .bookmark a [class*="bg-theme"] * { color: var(--paper) !important; }
+.bookmark a:hover { background: var(--ink) !important; }
+.bookmark a:hover * { color: var(--paper) !important; }
+
+/* ---------- varie ---------- */
+::selection { background: var(--red); color: var(--paper); }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--paper); border-left: 1px solid var(--ink); }
+::-webkit-scrollbar-thumb { background: var(--ink); }
+
+#page_wrapper svg { color: var(--ink); }
+
+/* ---------- controllo Kali (custom.js) ---------- */
+.kali-ctl {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.1rem 0 0.8rem 3.4rem;
+}
+
+.kc-btn {
+  min-width: 8rem;
+  padding: 0.4rem 0.7rem;
+  border: 2px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font: 700 10px var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.kc-btn:hover:not(:disabled) { background: var(--ink); color: var(--paper); }
+.kc-btn:disabled { opacity: 0.45; cursor: default; }
+.kc-btn.stop { border-color: var(--red); color: var(--red); }
+.kc-btn.stop:hover:not(:disabled) { background: var(--red); color: var(--paper); }
+
+.kc-bar {
+  flex: 1;
+  height: 10px;
+  border: 1px solid var(--ink);
+}
+
+.kc-bar i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--ink);
+  transition: width 0.45s ease;
+}
+
+.kc-bar.go i {
+  background: repeating-linear-gradient(-45deg, var(--ink) 0 6px, var(--paper) 6px 11px);
+  background-size: 16px 16px;
+  animation: kc-march 0.6s linear infinite;
+}
+
+@keyframes kc-march { to { background-position: 16px 0; } }
+
+.kc-txt {
+  min-width: 12rem;
+  text-align: right;
+  font: 10px var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* per le macchine del Lab lo stato lo mostra la striscia (ACCENDI/SPEGNI), non il badge Docker */
+.service[data-name="Kali Linux"] .service-tags { display: none; }
+
+/* striscia di controllo a livello di gruppo/progetto */
+.kali-ctl.grp { padding: 0.8rem 0 0.4rem 0; }
+.kali-ctl.grp .kc-txt { min-width: 9rem; }
+
+/* ---------- schermata di avvio ----------
+   Copre il caricamento di Homepage (pagina vuota, "API Error", icone rotte) e sfuma quando
+   i container hanno il loro stato. Se :has() non è supportato o Docker non risponde,
+   sparisce comunque dopo 6 secondi. */
+html::before {
+  content: "Docker Global";
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 4.5rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  letter-spacing: -0.015em;
+  animation: boot-out 0.4s ease 6s forwards;
+}
+
+html::after {
+  content: "";
+  position: fixed;
+  z-index: 9999;
+  left: 50%;
+  top: calc(50% + 1.6rem);
+  width: min(260px, 60vw);
+  height: 12px;
+  margin-left: calc(min(260px, 60vw) / -2);
+  border: 2px solid var(--ink);
+  background: repeating-linear-gradient(-45deg, var(--ink) 0 7px, var(--paper) 7px 13px);
+  background-size: 18px 18px;
+  animation: boot-march 0.7s linear infinite, boot-out 0.4s ease 6s forwards;
+}
+
+html:has(.docker-status-running)::before,
+html:has(.docker-status-running)::after {
+  opacity: 0;
+  visibility: hidden;
+  animation: none;
+  /* piccola pausa prima della dissolvenza: gli stati degli altri container arrivano uno alla volta */
+  transition: opacity 0.4s ease 0.7s, visibility 0s linear 1.1s;
+}
+
+@keyframes boot-march { to { background-position: 18px 0; } }
+@keyframes boot-out { to { opacity: 0; visibility: hidden; } }
+
+@media (prefers-reduced-motion: reduce) {
+  html::after { animation: boot-out 0.4s ease 6s forwards; }
+}
