@@ -515,3 +515,57 @@ html:has(.docker-status-running)::after {
 @media (prefers-reduced-motion: reduce) {
   html::after { animation: boot-out 0.4s ease 6s forwards; }
 }
+
+/* ---------- schede (Home / Progetti) ---------- */
+#tabs { margin: 1.2rem 2rem 0 !important; }
+
+#myTab {
+  display: flex !important;
+  gap: 0;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  border: 2px solid var(--ink);
+  border-radius: 0 !important;
+}
+
+#myTab li {
+  height: auto !important;
+  border-radius: 0 !important;
+  border-right: 1px solid var(--ink);
+}
+
+#myTab li:last-child { border-right: 0; }
+
+#myTab button {
+  margin: 0 !important;
+  padding: 0.55rem 1rem;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--ink) !important;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+#myTab button:hover { background: rgba(0, 0, 0, 0.08) !important; }
+
+#myTab button[aria-selected="true"] {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+}
+
+/* ---------- link rapidi dentro la griglia della scheda Home ---------- */
+#layout-groups > .bookmark-group {
+  grid-column: span 6;
+  flex: none !important;
+  padding: 0.9rem 1rem 0.6rem !important;
+  background: var(--paper);
+}
+
+/* l'ultimo gruppo di servizi occupa tutta la riga se seguito dai link rapidi */
+#layout-groups > .services-group:has(+ .bookmark-group) { grid-column: span 12; }
+
+@media (max-width: 1100px) {
+  #layout-groups > .bookmark-group { grid-column: span 12; }
+}
