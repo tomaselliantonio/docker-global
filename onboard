@@ -1,0 +1,124 @@
+#!/usr/bin/env python3
+"""Onboarding di un progetto docker su Traefik + Homepage.
+
+Uso:
+  ./onboard <cartella-progetto> [servizio:porta ...] [--name nome] [--group "Nome gruppo"] [--dry-run] [--no-up]
+
+Cosa fa:
+  1. legge il compose del progetto (docker compose config)
+  2. genera <progetto>/docker-compose.traefik.yml con rete web_network + label Traefik + label homepage.*
+     (gruppo = --group, default il nome del progetto)
+  3. (default) lo applica con `docker compose -f ... -f docker-compose.traefik.yml up -d`
+Poi, per averlo nella tab Progetti: aggiungi il gruppo in homepage/config/settings.yaml (layout, tab: Progetti)
+e, se vuoi il pulsante accendi/spegni, il progetto in PROJECTS di projects-ctl (docker-compose.yml).
+
+Senza servizio:porta usa i servizi che pubblicano/espongono porte HTTP.
+Hostname:  <nome>.localhost per il primo servizio, <servizio>.<nome>.localhost per gli altri.
+"""
+import json, os, re, subprocess, sys
+
+args = sys.argv[1:]
+if not args or args[0] in ("-h", "--help"):
+    print(__doc__); sys.exit(0)
+
+dry = "--dry-run" in args; noup = "--no-up" in args
+name = None; group = None
+if "--name" in args:
+    i = args.index("--name"); name = args[i + 1]; del args[i:i + 2]
+if "--group" in args:
+    i = args.index("--group"); group = args[i + 1]; del args[i:i + 2]
+args = [a for a in args if not a.startswith("--")]
+pdir = os.path.abspath(args[0]); picks = args[1:]
+if not os.path.isdir(pdir):
+    sys.exit(f"cartella non trovata: {pdir}")
+
+def sh(cmd, **kw):
+    return subprocess.run(cmd, cwd=pdir, capture_output=True, text=True, **kw)
+
+r = sh(["docker", "compose", "config", "--format", "json"])
+if r.returncode:
+    sys.exit("docker compose config fallito:\n" + r.stderr)
+cfg = json.loads(r.stdout)
+services = cfg.get("services", {})
+project = re.sub(r"[^a-z0-9-]", "-", (name or cfg.get("name") or os.path.basename(pdir)).lower()).strip("-")
+group = group or project.replace("-", " ").title()
+
+SKIP = re.compile(r"(^|_|-)(db|mysql|mariadb|postgres|mongo|redis|memcached|php|worker|queue|cron)($|_|-)", re.I)
+HTTP_PORTS = {80, 443, 3000, 3001, 4000, 5000, 5173, 8000, 8025, 8080, 8081, 8888, 9000}
+
+ICON = {"nginx": "nginx.png", "web": "mdi-web", "app": "mdi-web", "mailpit": "mailpit.png", "pma": "phpmyadmin.png", "phpmyadmin": "phpmyadmin.png", "adminer": "adminer.png"}
+
+def guess_port(svc):
+    cands = []
+    for p in svc.get("ports", []) or []:
+        t = p.get("target") if isinstance(p, dict) else None
+        if t: cands.append(int(t))
+    for e in svc.get("expose", []) or []:
+        cands.append(int(str(e).split("/")[0]))
+    for c in cands:
+        if c in HTTP_PORTS: return c
+    if cands: return cands[0]
+    img = str(svc.get("image") or "")
+    if re.match(r"^(nginx|httpd|caddy|traefik/whoami)", img): return 80
+    return None
+
+chosen = []
+if picks:
+    for p in picks:
+        s, _, port = p.partition(":")
+        if s not in services: sys.exit(f"servizio '{s}' non esiste. Disponibili: {', '.join(services)}")
+        port = int(port) if port else guess_port(services[s])
+        if not port: sys.exit(f"porta per '{s}' non rilevata, usa {s}:PORTA")
+        chosen.append((s, port))
+else:
+    for s, svc in services.items():
+        if SKIP.search(s) and not svc.get("ports") and not re.match(r"^(nginx|httpd|caddy)", str(svc.get("image") or "")): continue
+        port = guess_port(svc)
+        if port and not re.search(r"(^|_|-)(db|mysql|mariadb|postgres|mongo|redis)($|_|-)", s, re.I):
+            chosen.append((s, port))
+if not chosen:
+    sys.exit("Nessun servizio HTTP rilevato. Indicalo a mano:  ./onboard <dir> servizio:porta")
+
+lines = ["# Generato da docker-global/onboard — aggiunge il servizio a Traefik + Homepage", "services:"]
+for i, (s, port) in enumerate(chosen):
+    host = f"{project}.localhost" if i == 0 else f"{s}.{project}.localhost"
+    router = f"{project}_{s}".replace("-", "_")
+    title = project.replace("-", " ").title() if i == 0 else s.replace("-", " ").title()
+    lines += [
+        f"  {s}:",
+        "    networks: [default, web_network]",
+        "    labels:",
+        '      - "traefik.enable=true"',
+        '      - "traefik.docker.network=web_network"',
+        f'      - "traefik.http.routers.{router}.rule=Host(`{host}`)"',
+        f'      - "traefik.http.routers.{router}.entrypoints=web"',
+        f'      - "traefik.http.services.{router}.loadbalancer.server.port={port}"',
+        f'      - "homepage.group={group}"',
+        f'      - "homepage.name={title}"',
+        f'      - "homepage.icon={ICON.get(s.lower(), "mdi-web")}"',
+        f'      - "homepage.href=http://{host}/"',
+    ]
+lines += ["", "networks:", "  web_network:", "    external: true", "    name: web_network", ""]
+out = "\n".join(lines)
+target = os.path.join(pdir, "docker-compose.traefik.yml")
+
+print(f"Progetto: {project}\n")
+for i, (s, port) in enumerate(chosen):
+    print(f"  {s:<20} :{port:<6} -> http://{project + '.localhost' if i == 0 else s + '.' + project + '.localhost'}")
+print()
+if dry:
+    print("--dry-run: nessun file scritto. Anteprima:\n"); print(out); sys.exit(0)
+
+if os.path.exists(target):
+    print(f"(sovrascrivo {target})")
+open(target, "w").write(out)
+print(f"Scritto: {target}")
+
+base = [f for f in ("docker-compose.yml", "docker-compose.yaml", "compose.yml", "compose.yaml") if os.path.exists(os.path.join(pdir, f))]
+if not base:
+    sys.exit("Nessun compose base standard trovato: usa -f manualmente.")
+up = ["docker", "compose", "-f", base[0], "-f", "docker-compose.traefik.yml", "up", "-d"]
+if noup:
+    print("\nPer avviarlo:\n  cd " + pdir + " && " + " ".join(up)); sys.exit(0)
+print("\n$ " + " ".join(up))
+sys.exit(subprocess.run(up, cwd=pdir).returncode)

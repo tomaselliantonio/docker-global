@@ -24,6 +24,12 @@ layout:
   Svago:
     tab: Home
     icon: mdi-gamepad-variant-outline
+  Sviluppo:
+    tab: Home
+    icon: mdi-code-braces
+  Personale:
+    tab: Home
+    icon: mdi-account-lock-outline
   Sistema:
     tab: Home
     icon: mdi-server-network
