@@ -1,0 +1,2 @@
+# onboard viene letto da Linux/bash: sempre LF, anche su Windows
+onboard text eol=lf

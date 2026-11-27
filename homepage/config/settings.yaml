@@ -15,12 +15,6 @@ layout:
   Strumenti:
     tab: Home
     icon: mdi-toolbox-outline
-  Sviluppo:
-    tab: Home
-    icon: mdi-code-braces
-  Personale:
-    tab: Home
-    icon: mdi-account-lock-outline
   Sistema:
     tab: Home
     icon: mdi-server-network

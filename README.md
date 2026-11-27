@@ -1,43 +1,74 @@
 # docker-global
 
-Traefik + Homepage + strumenti locali, tutto su `*.localhost` (Traefik ascolta solo su 127.0.0.1).
+Una homepage locale con gli strumenti di tutti i giorni, raggiungibile solo dal tuo PC.
 
-## Primo avvio
+| Cosa | Indirizzo |
+|---|---|
+| Homepage | http://homepage.localhost |
+| IT-Tools (utility per sviluppatori) | http://tools.localhost |
+| Excalidraw (disegni e diagrammi) | http://draw.localhost |
+| Stirling PDF (unire, dividere, comprimere PDF) | http://pdf.localhost |
+| Traefik (reverse proxy) | http://localhost:8080/dashboard/ |
 
-```bash
-./setup.sh
-```
+Non servono account né password.
 
-Crea `.env` con segreti casuali, avvia i servizi, crea gli account locali (Gitea, n8n, Beszel, Memos), registra il runner di Gitea Actions e l'agente Beszel. Le credenziali vanno in `credentials.txt` (non versionato).
-Dopo il primo giro basta `docker compose up -d`.
+## Cosa serve
 
-**Vaultwarden**: crea tu l'account su http://vault.localhost (la master password è solo tua), poi metti `SIGNUPS_ALLOWED=false` nel compose.
+- Docker Desktop, avviato
+- Git
+- le porte 80 e 8080 libere
 
-## Servizi aggiunti
-
-| Gruppo | Servizio | URL |
-|---|---|---|
-| Sviluppo | Gitea (+ runner Actions) | git.localhost (login automatico via Traefik) |
-| Sviluppo | n8n | n8n.localhost |
-| Sviluppo | Verdaccio (cache npm) | verdaccio.localhost · `npm config set registry http://localhost:4873` |
-| Sviluppo | MinIO (S3 locale) | minio.localhost · API s3.localhost / localhost:9000 |
-| Sviluppo | Mailpit | mail.localhost (SMTP `mailpit:1025`) |
-| Personale | Vaultwarden | vault.localhost |
-| Personale | Linkding | links.localhost (login automatico) |
-| Personale | Memos | memos.localhost |
-| Strumenti | ConvertX | convert.localhost |
-| Sistema | Beszel (+ agente) | beszel.localhost (login automatico) |
-| Sistema | Dozzle (log) | logs.localhost |
-| — | Diun | avvisa via Mailpit quando escono nuove immagini (lunedì 9:00) |
-| — | volume_backup | backup notturno (03:00 UTC) di tutti i volumi in `./backups`, ultimi 7. Subito: `docker exec volume_backup /backup.sh now` |
-
-Il login automatico (Gitea, Linkding) funziona perché Traefik aggiunge un header d'identità: è sicuro solo finché Traefik resta legato a 127.0.0.1.
-
-## Aggiungere un progetto
+## Installazione (una volta sola)
 
 ```bash
-./onboard ../mio-progetto [--group "Nome gruppo"] [--dry-run]
+git clone https://github.com/tomaselliantonio/docker-global.git
+cd docker-global
+docker network create web_network
+docker compose up -d --build
 ```
 
-Genera `docker-compose.traefik.yml` nel progetto (rete `web_network`, label Traefik e `homepage.*`) e lo avvia.
-I tuoi progetti restano sul tuo PC: per la tab *Progetti* e il pulsante accendi/spegni segui `docker-compose.override.example.yml` (`docker-compose.override.yml` e `local/` non sono versionati).
+La prima volta ci vogliono alcuni minuti per scaricare e costruire le immagini. Poi apri http://homepage.localhost.
+
+Se `docker network create` dice che la rete esiste già, vai avanti.
+
+## Uso quotidiano
+
+Tutti i comandi vanno lanciati nella cartella `docker-global`.
+
+| Per | Comando |
+|---|---|
+| Accendere (anche dopo un riavvio del PC) | `docker compose up -d` |
+| Spegnere | `docker compose stop` |
+| Aggiornare | `git pull` e poi `docker compose up -d --build --remove-orphans` |
+
+## Personalizzare (facoltativo)
+
+Le personalizzazioni restano sul tuo PC: `docker-compose.override.yml` e la cartella `local/` non vanno su git.
+
+1. Copia `docker-compose.override.example.yml` in `docker-compose.override.yml`.
+2. Cambia il saluto in `HOMEPAGE_VAR_GREETING`.
+3. Per il pulsante accendi/spegni dei tuoi progetti, elencali in `PROJECTS`: `"nome-progetto-compose":"Titolo del gruppo"`.
+4. Per dare ai progetti una scheda a parte, copia `homepage/config/settings.yaml` in `local/settings.yaml`, aggiungi sotto `layout` un blocco per ogni progetto (con lo stesso titolo del punto 3) e togli i commenti alle righe `volumes` nel file di override:
+
+   ```yaml
+     Mio Progetto:
+       tab: Progetti
+   ```
+
+   Aggiungi `tab: Home` anche ai gruppi già presenti, se non ce l'hanno.
+5. Applica con `docker compose up -d`.
+
+## Aggiungere un progetto alla homepage
+
+Serve Python 3.
+
+```bash
+python onboard ../mio-progetto --group "Mio Progetto" --dry-run
+```
+
+Mostra l'anteprima. Senza `--dry-run` crea `docker-compose.traefik.yml` nel progetto e lo avvia. Su macOS e Linux usa `python3`.
+
+## Problemi comuni
+
+- **La pagina non si apre:** controlla che Docker Desktop sia avviato e lancia `docker compose ps`.
+- **Errore "port is already allocated":** un altro programma usa la porta 80 o 8080. Chiudilo e rilancia `docker compose up -d`.

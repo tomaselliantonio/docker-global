@@ -3,8 +3,6 @@ node_modules/
 dist/
 .env
 .DS_Store
-credentials.txt
-backups/
 
 # personalizzazioni locali
 docker-compose.override.yml

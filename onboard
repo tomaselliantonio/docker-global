@@ -111,7 +111,7 @@ if dry:
 
 if os.path.exists(target):
     print(f"(sovrascrivo {target})")
-open(target, "w").write(out)
+open(target, "w", encoding="utf-8", newline="\n").write(out)
 print(f"Scritto: {target}")
 
 base = [f for f in ("docker-compose.yml", "docker-compose.yaml", "compose.yml", "compose.yaml") if os.path.exists(os.path.join(pdir, f))]
