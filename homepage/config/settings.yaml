@@ -15,15 +15,6 @@ layout:
   Strumenti:
     tab: Home
     icon: mdi-toolbox-outline
-  Security:
-    tab: Home
-    icon: mdi-shield-lock-outline
-  Lab:
-    tab: Home
-    icon: mdi-flask-outline
-  Svago:
-    tab: Home
-    icon: mdi-gamepad-variant-outline
   Sviluppo:
     tab: Home
     icon: mdi-code-braces
@@ -33,11 +24,3 @@ layout:
   Sistema:
     tab: Home
     icon: mdi-server-network
-  Certosa Padula:
-    tab: Progetti
-  Blackbyrd:
-    tab: Progetti
-  Renova:
-    tab: Progetti
-  Italia in Classe A:
-    tab: Progetti

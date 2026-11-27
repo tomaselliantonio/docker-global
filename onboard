@@ -9,8 +9,8 @@ Cosa fa:
   2. genera <progetto>/docker-compose.traefik.yml con rete web_network + label Traefik + label homepage.*
      (gruppo = --group, default il nome del progetto)
   3. (default) lo applica con `docker compose -f ... -f docker-compose.traefik.yml up -d`
-Poi, per averlo nella tab Progetti: aggiungi il gruppo in homepage/config/settings.yaml (layout, tab: Progetti)
-e, se vuoi il pulsante accendi/spegni, il progetto in PROJECTS di projects-ctl (docker-compose.yml).
+Poi, per averlo nella tab Progetti e con il pulsante accendi/spegni,
+segui docker-compose.override.example.yml (le personalizzazioni non vanno su git).
 
 Senza servizio:porta usa i servizi che pubblicano/espongono porte HTTP.
 Hostname:  <nome>.localhost per il primo servizio, <servizio>.<nome>.localhost per gli altri.

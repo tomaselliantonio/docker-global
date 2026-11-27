@@ -40,4 +40,4 @@ Il login automatico (Gitea, Linkding) funziona perché Traefik aggiunge un heade
 ```
 
 Genera `docker-compose.traefik.yml` nel progetto (rete `web_network`, label Traefik e `homepage.*`) e lo avvia.
-Per la tab *Progetti* aggiungi il gruppo in `homepage/config/settings.yaml` (e in `PROJECTS` di `projects-ctl` per il pulsante accendi/spegni).
+I tuoi progetti restano sul tuo PC: per la tab *Progetti* e il pulsante accendi/spegni segui `docker-compose.override.example.yml` (`docker-compose.override.yml` e `local/` non sono versionati).

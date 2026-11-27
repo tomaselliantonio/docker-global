@@ -401,8 +401,8 @@ body::after {
 
 #page_wrapper svg { color: var(--ink); }
 
-/* ---------- controllo Kali (custom.js) ---------- */
-.kali-ctl {
+/* ---------- controllo accensione progetti (custom.js) ---------- */
+.proj-strip {
   display: flex;
   align-items: center;
   gap: 0.8rem;
@@ -456,12 +456,9 @@ body::after {
   text-transform: uppercase;
 }
 
-/* per le macchine del Lab lo stato lo mostra la striscia (ACCENDI/SPEGNI), non il badge Docker */
-.service[data-name="Kali Linux"] .service-tags { display: none; }
-
 /* striscia di controllo a livello di gruppo/progetto */
-.kali-ctl.grp { padding: 0.8rem 0 0.4rem 0; }
-.kali-ctl.grp .kc-txt { min-width: 9rem; }
+.proj-strip.grp { padding: 0.8rem 0 0.4rem 0; }
+.proj-strip.grp .kc-txt { min-width: 9rem; }
 
 /* ---------- schermata di avvio ----------
    Copre il caricamento di Homepage (pagina vuota, "API Error", icone rotte) e sfuma quando

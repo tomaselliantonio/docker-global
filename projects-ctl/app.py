@@ -1,6 +1,7 @@
 """Accende/spegne interi progetti docker compose (tutti i loro container). Solo stdlib.
 
-Agisce SOLO sui progetti elencati in PROJECTS (slug -> nome del progetto compose),
+Agisce SOLO sui progetti elencati in PROJECTS
+(nome del progetto compose -> titolo del gruppo in homepage),
 riconosciuti dall'etichetta com.docker.compose.project. Nessun altro container viene toccato.
 """
 import http.client
@@ -66,7 +67,7 @@ def is_ready(c):
 
 
 def status(slug):
-    cs = containers(PROJECTS[slug])
+    cs = containers(slug)
     total = len(cs)
     if total == 0:
         return {"state": "missing", "progress": 0, "stage": "Progetto non trovato", "seconds": 0}
@@ -108,7 +109,7 @@ def start(slug):
 
     def run():
         try:
-            for c in sorted(containers(PROJECTS[slug]), key=order_key):
+            for c in sorted(containers(slug), key=order_key):
                 if c.get("State") != "running":
                     docker("POST", f"/containers/{c['Id']}/start")
                     if service_of(c) == "db":
@@ -125,7 +126,7 @@ def stop(slug):
 
     def run():
         try:
-            for c in sorted(containers(PROJECTS[slug]), key=order_key, reverse=True):
+            for c in sorted(containers(slug), key=order_key, reverse=True):
                 if c.get("State") == "running":
                     docker("POST", f"/containers/{c['Id']}/stop?t={STOP_TIMEOUT}")
         except Exception:
@@ -160,13 +161,13 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.send_response(204)
         self._cors()
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "X-Kali-Ctl")
+        self.send_header("Access-Control-Allow-Headers", "X-Projects-Ctl")
         self.end_headers()
 
     def do_GET(self):
         if self.path.split("?")[0] == "/api/projects":
             try:
-                self._send(200, {slug: status(slug) for slug in PROJECTS})
+                self._send(200, {slug: {"name": name, **status(slug)} for slug, name in PROJECTS.items()})
             except Exception as e:
                 self._send(500, {"error": str(e)})
         else:
@@ -174,7 +175,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
     def do_POST(self):
         # l'header custom blocca i POST "semplici" fatti da altre pagine (CSRF)
-        if self.headers.get("X-Kali-Ctl") != "1":
+        if self.headers.get("X-Projects-Ctl") != "1":
             return self._send(403, {"error": "forbidden"})
         parts = self.path.split("?")[0].strip("/").split("/")  # api/projects/<slug>/<azione>
         if len(parts) != 4 or parts[:2] != ["api", "projects"] or parts[2] not in PROJECTS or parts[3] not in ("start", "stop"):

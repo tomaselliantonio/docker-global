@@ -4,7 +4,7 @@
 
 - greeting:
     text_size: 4xl
-    text: Bentornato, Antonio
+    text: "{{HOMEPAGE_VAR_GREETING}}"
 
 - resources:
     cpu: true

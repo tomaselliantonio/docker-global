@@ -29,6 +29,7 @@ services:
     container_name: homepage
     environment:
       - HOMEPAGE_ALLOWED_HOSTS=homepage.localhost
+      - HOMEPAGE_VAR_GREETING=Bentornato
     volumes:
       - ./homepage/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -57,22 +58,6 @@ services:
       - "homepage.href=http://tools.localhost/"
       - "homepage.description=Utility per sviluppatori"
 
-  cyberchef:
-    image: mpepping/cyberchef:latest
-    container_name: cyberchef
-    networks:
-      - web_network
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.cyberchef.rule=Host(`chef.localhost`)"
-      - "traefik.http.routers.cyberchef.entrypoints=web"
-      - "traefik.http.services.cyberchef.loadbalancer.server.port=8000"
-      - "homepage.group=Security"
-      - "homepage.name=CyberChef"
-      - "homepage.icon=cyberchef.png"
-      - "homepage.href=http://chef.localhost/"
-      - "homepage.description=Encode, decode, hash, crypto"
-
   excalidraw:
     image: excalidraw/excalidraw:latest
     container_name: excalidraw
@@ -89,71 +74,6 @@ services:
       - "homepage.href=http://draw.localhost/"
       - "homepage.description=Lavagna e diagrammi a mano libera"
 
-  arcade:
-    build: ./arcade
-    image: arcade:local
-    container_name: arcade
-    networks:
-      - web_network
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.arcade.rule=Host(`games.localhost`)"
-      - "traefik.http.routers.arcade.entrypoints=web"
-      - "traefik.http.services.arcade.loadbalancer.server.port=80"
-      - "homepage.group=Svago"
-      - "homepage.name=Arcade"
-      - "homepage.icon=mdi-gamepad-variant"
-      - "homepage.href=http://games.localhost/"
-      - "homepage.description=2048, Hextris, Pac-Man"
-
-  juiceshop:
-    image: bkimminich/juice-shop:latest
-    container_name: juiceshop
-    networks:
-      - web_network
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.juiceshop.rule=Host(`juice.localhost`)"
-      - "traefik.http.routers.juiceshop.entrypoints=web"
-      - "traefik.http.services.juiceshop.loadbalancer.server.port=3000"
-      - "homepage.group=Security"
-      - "homepage.name=Juice Shop"
-      - "homepage.icon=mdi-shield-bug"
-      - "homepage.href=http://juice.localhost/"
-      - "homepage.description=App vulnerabile OWASP per esercitarsi"
-
-  httpbin:
-    image: kennethreitz/httpbin:latest
-    container_name: httpbin
-    networks:
-      - web_network
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.httpbin.rule=Host(`bin.localhost`)"
-      - "traefik.http.routers.httpbin.entrypoints=web"
-      - "traefik.http.services.httpbin.loadbalancer.server.port=80"
-      - "homepage.group=Security"
-      - "homepage.name=httpbin"
-      - "homepage.icon=mdi-api"
-      - "homepage.href=http://bin.localhost/"
-      - "homepage.description=Testa richieste e risposte HTTP"
-
-  drawio:
-    image: jgraph/drawio:latest
-    container_name: drawio
-    networks:
-      - web_network
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.drawio.rule=Host(`diagram.localhost`)"
-      - "traefik.http.routers.drawio.entrypoints=web"
-      - "traefik.http.services.drawio.loadbalancer.server.port=8080"
-      - "homepage.group=Strumenti"
-      - "homepage.name=Draw.io"
-      - "homepage.icon=mdi-vector-polyline"
-      - "homepage.href=http://diagram.localhost/"
-      - "homepage.description=Diagrammi e schemi di rete"
-
   stirling-pdf:
     image: stirlingtools/stirling-pdf:latest-ultra-lite
     container_name: stirling-pdf
@@ -169,24 +89,6 @@ services:
       - "homepage.icon=mdi-file-pdf-box"
       - "homepage.href=http://pdf.localhost/"
       - "homepage.description=Unisci, dividi, comprimi PDF"
-
-  librespeed:
-    image: ghcr.io/librespeed/speedtest:latest
-    container_name: librespeed
-    environment:
-      - MODE=standalone
-    networks:
-      - web_network
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.librespeed.rule=Host(`speed.localhost`)"
-      - "traefik.http.routers.librespeed.entrypoints=web"
-      - "traefik.http.services.librespeed.loadbalancer.server.port=8080"
-      - "homepage.group=Sistema"
-      - "homepage.name=LibreSpeed"
-      - "homepage.icon=mdi-speedometer"
-      - "homepage.href=http://speed.localhost/"
-      - "homepage.description=Speedtest della rete locale"
 
   # ------------------------------------------------------------------
   # Sviluppo / automazione / personale / sistema
@@ -525,7 +427,7 @@ services:
     container_name: projects_ctl
     restart: unless-stopped
     environment:
-      - 'PROJECTS={"blackbyrd":"blackbyrd","renova":"renova","italiainclassea-2026":"italiainclassea-2026"}'
+      - PROJECTS={}  # i tuoi progetti vanno in docker-compose.override.yml
       - ALLOWED_ORIGINS=http://homepage.localhost
       - STOP_TIMEOUT=20
     volumes:

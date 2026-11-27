@@ -1,0 +1,17 @@
+# Personalizzazioni locali (facoltative).
+# Copia questo file in docker-compose.override.yml: Compose lo carica da solo e git lo ignora.
+# Al primo avvio serve la rete condivisa: docker network create web_network
+
+services:
+  homepage:
+    environment:
+      - HOMEPAGE_VAR_GREETING=Bentornato, Nome
+    # Per dare una scheda ai tuoi progetti: copia homepage/config/settings.yaml
+    # in local/settings.yaml, aggiungi i gruppi sotto "layout" e togli i commenti.
+    # volumes:
+    #   - ./local/settings.yaml:/app/config/settings.yaml
+
+  projects-ctl:
+    environment:
+      # "nome-progetto-compose": "Titolo del gruppo in homepage"
+      - 'PROJECTS={"mio-progetto":"Mio Progetto"}'
